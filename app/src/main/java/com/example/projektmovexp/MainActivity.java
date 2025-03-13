@@ -59,28 +59,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private ActivityMainBinding binding;
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        if(stepCounterSensor!=null){
-            sensorManager.unregisterListener(this);
-            timerHandler.removeCallbacks(timerRunnable);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (stepCounterSensor != null) {
-            sensorManager.registerListener(this, stepCounterSensor, SensorManager.SENSOR_DELAY_NORMAL);
-
-            timerHandler.postDelayed(timerRunnable, 0);
-        }
-    }
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // to jest do podłączenie do ui z activity_main.xml
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.fragment_home);
 
         // to zakomentowałem bo nie wiem jak dodac do poszczególnych zakładek z szablonu
 
@@ -102,26 +84,44 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // reszta powinna dzialac na oko, nie wiem nie testowalem bo ui nie chce mi sie robic
 
         stepCountTextView = findViewById(R.id.stepCountTextView);
-        distanceTextView = findViewById(R.id.distanceTextView);
+        /*distanceTextView = findViewById(R.id.distanceTextView);
         timeTextView = findViewById(R.id.timeTextView);
         pauseButton = findViewById(R.id.pauseButton);
         stepCountGoalTextView = findViewById(R.id.stepCountGoalTextView);
         stepCountGoalTextView.setText("Goal: " + stepCountGoal + " steps");
-        progressBar = findViewById(R.id.progressBar);
+        progressBar = findViewById(R.id.progressBar);*/
 
         startTime = System.currentTimeMillis();
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        //stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        //skomentowane bo wywala aplikację na tą chwilę
 
-        progressBar.setMax(stepCountGoal);
-        stepCountGoalTextView.setText("Goal: " + stepCountGoal + " steps");
+        /*progressBar.setMax(stepCountGoal);
+        stepCountGoalTextView.setText("Goal: " + stepCountGoal + " steps");*/
 
         if(stepCounterSensor == null) {
             stepCountTextView.setText("Step Counter Sensor not available");
-
         }
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(stepCounterSensor!=null){
+            sensorManager.unregisterListener(this);
+            timerHandler.removeCallbacks(timerRunnable);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (stepCounterSensor != null) {
+            sensorManager.registerListener(this, stepCounterSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            timerHandler.postDelayed(timerRunnable, 0);
+        }
     }
 
     @Override
@@ -129,12 +129,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (sensorEvent.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
             stepCount = (int) sensorEvent.values[0];
             stepCountTextView.setText("Step Count: " + stepCount);
-            progressBar.setProgress(stepCount);
+            //progressBar.setProgress(stepCount);
             if (stepCount >= stepCountGoal) {
                 stepCountTextView.setText("Congratulations! You reached your goal!");
             }
             float distanceInKm = stepCount * stepLength / 1000;
-            distanceTextView.setText(String.format(Locale.getDefault(),"Distance: %.2f km",distanceInKm));
+            //distanceTextView.setText(String.format(Locale.getDefault(),"Distance: %.2f km",distanceInKm));
+            //skomentowałem to czego jeszcze nie ma dodanego do ui
         }
     }
 
