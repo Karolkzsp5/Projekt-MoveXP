@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Button pauseButton;
     private SensorManager sensorManager;
     private Sensor stepCounterSensor;
+    private int initialStepCount = -1;
     private int stepCount = 0;
     private long timePaused = 0;
     private long startTime;
@@ -47,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             //timeTextView.setText(String.format(Locale.getDefault(), "Time: %02d:%02d:%02d", hours % 60, minutes % 60, seconds % 60));
             //skomentowane bo wywala aplikację na tą chwilę
             timerHandler.postDelayed(this, 1000);
-
 
         }
     };
@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         // to jest do podłączenie do ui z activity_main.xml
         setContentView(R.layout.fragment_home);
+
+        historyActivity = new HistoryActivity(this);
 
         // to zakomentowałem bo nie wiem jak dodac do poszczególnych zakładek z szablonu
 
@@ -113,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             sensorManager.unregisterListener(this);
             timerHandler.removeCallbacks(timerRunnable);
         }
+        saveHistoryActivity(); // Zapisanie spaceru przed zamknięciem aplikacji
     }
 
     @Override
@@ -124,21 +127,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
+    // poprawiona wersja tej metody (z zapamiętaniem wartości początkowej)
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         if (sensorEvent.sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
-            stepCount = (int) sensorEvent.values[0];
-            stepCountTextView.setText("Step Count: " + stepCount);
-            //progressBar.setProgress(stepCount);
-            /*if (stepCount >= stepCountGoal) {
-                stepCountTextView.setText("Congratulations! You reached your goal!");
+            if (initialStepCount == -1) {
+                initialStepCount = (int) sensorEvent.values[0];
             }
-            skomentowane, bo licznik nie startuje od 0 i może od razu osiągnąć cel*/
-            float distanceInKm = stepCount * stepLength / 1000;
-            //distanceTextView.setText(String.format(Locale.getDefault(),"Distance: %.2f km",distanceInKm));
-            //skomentowałem to czego jeszcze nie ma dodanego do ui
+            stepCount = (int) sensorEvent.values[0] - initialStepCount;
+
+            stepCountTextView.setText("Kroki: " + stepCount);
         }
     }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
@@ -158,6 +159,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             timerHandler.removeCallbacks(timerRunnable);
             timePaused = System.currentTimeMillis() - startTime;
         }
+    }
+
+    // tworzenie obiektu HistoryActivity
+    private HistoryActivity historyActivity;
+
+    // metoda do zapisywania spaceru
+    private void saveHistoryActivity() {
+        long duration = System.currentTimeMillis() - startTime;
+        float distance = stepCount * stepLength / 1000;
+        historyActivity.saveWalk(stepCount, distance, duration);
     }
 
 }
