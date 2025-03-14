@@ -44,7 +44,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             long seconds = milliseconds / 1000;
             long minutes = seconds / 60;
             long hours = minutes / 60;
-            timeTextView.setText(String.format(Locale.getDefault(), "Time: %02d:%02d:%02d", hours % 60, minutes % 60, seconds % 60));
+            //timeTextView.setText(String.format(Locale.getDefault(), "Time: %02d:%02d:%02d", hours % 60, minutes % 60, seconds % 60));
+            //skomentowane bo wywala aplikację na tą chwilę
             timerHandler.postDelayed(this, 1000);
 
 
@@ -95,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        //skomentowane bo wywala aplikację na tą chwilę
 
         /*progressBar.setMax(stepCountGoal);
         stepCountGoalTextView.setText("Goal: " + stepCountGoal + " steps");*/
@@ -130,9 +130,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             stepCount = (int) sensorEvent.values[0];
             stepCountTextView.setText("Step Count: " + stepCount);
             //progressBar.setProgress(stepCount);
-            if (stepCount >= stepCountGoal) {
+            /*if (stepCount >= stepCountGoal) {
                 stepCountTextView.setText("Congratulations! You reached your goal!");
             }
+            skomentowane, bo licznik nie startuje od 0 i może od razu osiągnąć cel*/
             float distanceInKm = stepCount * stepLength / 1000;
             //distanceTextView.setText(String.format(Locale.getDefault(),"Distance: %.2f km",distanceInKm));
             //skomentowałem to czego jeszcze nie ma dodanego do ui
