@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         startTime = System.currentTimeMillis();
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        //stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        stepCounterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         //skomentowane bo wywala aplikację na tą chwilę
 
         /*progressBar.setMax(stepCountGoal);
